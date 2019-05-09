@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
             break;
         }
 
+        time_t rawtime;
        
         if(is_banned(senderAddr.sin_addr.s_addr, banned_list))
             continue;
@@ -123,15 +124,15 @@ int main(int argc, char *argv[])
         if(last_same_request == NULL){
             request_t request;
             request.addr = senderAddr.sin_addr.s_addr;
-            time_t currtime = time(NULL);
-            request.last_request = currtime;
+            
+            request.last_request = time(&rawtime);
             request.warning = false;
             request.next = requests;
             requests = &request;
         }else{
-            time_t currtime = time(NULL);
-            printf("%lf\n", difftime(currtime,last_same_request->last_request));
-            if(difftime(currtime,last_same_request->last_request)<10){
+            time(&rawtime);
+            printf("%lf\n", difftime(time(&rawtime),last_same_request->last_request));
+            if(difftime(rawtime,last_same_request->last_request)<10){
                 if(last_same_request->warning){
                     banned_ip_t banned_ip;
                     banned_ip.addr = last_same_request->addr;
